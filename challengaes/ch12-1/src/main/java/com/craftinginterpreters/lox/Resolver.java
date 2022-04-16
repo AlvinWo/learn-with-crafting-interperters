@@ -18,6 +18,7 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     private enum FunctionType {
         NONE,
         FUNCTION,
+        STATIC_FUNCTION,
         INITIALIZER,
         METHOD
     }
@@ -46,6 +47,10 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         for (Stmt.Function function : stmt.methods) {
             FunctionType declaration = function.name.lexeme.equals("init") ? FunctionType.INITIALIZER : FunctionType.METHOD;
             resolveFunction(function, declaration);
+        }
+
+        for(Stmt.Function staticFunction: stmt.staticMethods) {
+            resolveFunction(staticFunction, FunctionType.STATIC_FUNCTION);
         }
 
         define(stmt.name);
