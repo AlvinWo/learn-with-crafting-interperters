@@ -1,8 +1,7 @@
-class Foo {
-  init() {
-    print this;
+class Math {
+  class square(n) {
+    return n * n;
   }
 }
 
-var foo = Foo();
-print foo.init();
+print Math.square(3); // Prints "9".
