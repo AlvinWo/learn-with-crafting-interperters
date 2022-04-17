@@ -9,6 +9,7 @@ abstract class Stmt {
         R visitBreakStmt(Break stmt);
         R visitExpressionStmt(Expression stmt);
         R visitFunctionStmt(Function stmt);
+        R visitGetterStmt(Getter stmt);
         R visitIfStmt(If stmt);
         R visitPrintStmt(Print stmt);
         R visitReturnStmt(Return stmt);
@@ -27,9 +28,10 @@ abstract class Stmt {
         final List<Stmt> statements;
     }
     static class Class extends Stmt{
-        Class(Token name, List<Stmt.Function> methods){
+        Class(Token name, List<Stmt.Function> methods, List<Stmt.Getter> getters){
             this.name = name;
             this.methods = methods;
+            this.getters = getters;
         }
 
        @Override
@@ -38,6 +40,7 @@ abstract class Stmt {
        }
         final Token name;
         final  List<Stmt.Function> methods;
+        final  List<Stmt.Getter> getters;
     }
     static class Break extends Stmt{
         Break(){
@@ -72,6 +75,19 @@ abstract class Stmt {
        }
         final Token name;
         final  List<Token> params;
+        final  List<Stmt> body;
+    }
+    static class Getter extends Stmt{
+        Getter(Token name, List<Stmt> body){
+            this.name = name;
+            this.body = body;
+        }
+
+       @Override
+       <R> R accept(Visitor<R> visitor) {
+            return visitor.visitGetterStmt(this);
+       }
+        final Token name;
         final  List<Stmt> body;
     }
     static class If extends Stmt{

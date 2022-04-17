@@ -166,7 +166,13 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     public Object visitGetExpr(Expr.Get expr) {
         Object object = evaluate(expr.object);
         if (object instanceof LoxInstance) {
-            return ((LoxInstance) object).get(expr.name);
+            Object value = ((LoxInstance) object).get(expr.name);
+            if(value instanceof LoxGetter) {
+                LoxGetter getter = (LoxGetter) value;
+
+              return getter.bind((LoxInstance) object).call(this, null);
+            }
+            return value;
         }
         throw new RuntimeError(expr.name, "Only instances have properties.");
     }
@@ -295,7 +301,12 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
             methods.put(method.name.lexeme, new LoxFunction(method, this.environment, method.name.lexeme.equals("init")));
         }
 
-        LoxClass klass = new LoxClass(stmt.name.lexeme, methods);
+        Map<String, LoxGetter> getters = new HashMap<>();
+        for(Stmt.Getter getter: stmt.getters){
+            getters.put(getter.name.lexeme, new LoxGetter(getter, this.environment));
+        }
+
+        LoxClass klass = new LoxClass(stmt.name.lexeme, methods, getters);
         this.environment.assign(stmt.name, klass);
         return null;
     }
@@ -327,6 +338,13 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     public Void visitFunctionStmt(Stmt.Function stmt) {
         LoxFunction function = new LoxFunction(stmt, environment, false);
         this.environment.define(stmt.name.lexeme, function);
+        return null;
+    }
+
+    @Override
+    public Void visitGetterStmt(Stmt.Getter stmt) {
+        LoxGetter getter = new LoxGetter(stmt, environment);
+        this.environment.define(stmt.name.lexeme, getter);
         return null;
     }
 

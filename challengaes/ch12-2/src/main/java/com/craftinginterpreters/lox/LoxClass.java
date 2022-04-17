@@ -6,16 +6,23 @@ import java.util.Map;
 public class LoxClass implements LoxCallable {
     final String name;
     private final Map<String, LoxFunction> methods;
+    private final Map<String, LoxGetter> getters;
 
 
-    public LoxClass(String name, Map<String, LoxFunction> methods) {
+    public LoxClass(String name, Map<String, LoxFunction> methods, Map<String, LoxGetter> getters) {
         this.name = name;
         this.methods = methods;
+        this.getters = getters;
     }
 
     public LoxFunction findMethod(String name) {
         if (methods.containsKey(name))
             return methods.get(name);
+        return null;
+    }
+
+    public LoxGetter findGetter(String name) {
+        if(getters.containsKey(name)) return getters.get(name);
         return null;
     }
 

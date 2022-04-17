@@ -1,8 +1,12 @@
-class Foo {
-  init() {
-    print this;
+class Circle {
+  init(radius) {
+    this.radius = radius;
+  }
+
+  area {
+    return 3.141592653 * this.radius * this.radius;
   }
 }
 
-var foo = Foo();
-print foo.init();
+var circle = Circle(4);
+print circle.area;

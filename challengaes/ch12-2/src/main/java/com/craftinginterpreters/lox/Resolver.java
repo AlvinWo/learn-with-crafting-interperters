@@ -48,6 +48,10 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
             resolveFunction(function, declaration);
         }
 
+        for (Stmt.Getter getter: stmt.getters) {
+            resolveGetter(getter);
+        }
+
         define(stmt.name);
         endScope();
         this.currentClass = enclosingClassType;
@@ -73,6 +77,24 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         resolveFunction(stmt, FunctionType.FUNCTION);
         return null;
     }
+
+    @Override
+    public Void visitGetterStmt(Stmt.Getter stmt) {
+        resolveGetter(stmt);
+        return null;
+    }
+
+    private void resolveGetter(Stmt.Getter stmt) {
+        FunctionType type = currentFunction;
+        currentFunction = FunctionType.METHOD;
+        declare(stmt.name);
+        define(stmt.name);
+        beginScope();
+        resolve(stmt.body);
+        endScope();
+        currentFunction = type;
+    }
+
 
     @Override
     public Void visitIfStmt(Stmt.If stmt) {
