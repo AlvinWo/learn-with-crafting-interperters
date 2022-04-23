@@ -1,8 +1,11 @@
-class Foo {
-  init() {
-    print this;
+class Person {
+  sayName() {
+    print this.name;
   }
 }
 
-var foo = Foo();
-print foo.init();
+var jane = Person();
+jane.name = "Jane";
+
+var method = jane.sayName;
+method(); // ?
