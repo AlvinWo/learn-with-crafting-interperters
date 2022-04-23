@@ -290,9 +290,6 @@ class Parser {
                 return new Expr.Set(get.object, get.name, value);
             }
             error(equals, "Invalid assignment target.");
-        } else if (expr instanceof Expr.Get) {
-            Expr.Get get = (Expr.Get) expr;
-            return new Expr.Set(get.object, get.name, assignment());
         }
         return expr;
     }
